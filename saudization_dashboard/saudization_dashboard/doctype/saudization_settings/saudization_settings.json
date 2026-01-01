@@ -5,7 +5,7 @@
  "custom": 0,
  "issingle": 1,
  "fields": [
-  {"fieldname":"saudi_nationality","label":"Saudi Nationality","fieldtype":"Link","options":"Countr","reqd":1},
+  {"fieldname":"saudi_nationality","label":"Saudi Nationality","fieldtype":"Link","options":"Country","reqd":1},
   {"fieldname":"gcc_nationalities","label":"GCC Nationalities","fieldtype":"Table","options":"Saudization Settings GCC Nationality"}
  ],
  "permissions": [
