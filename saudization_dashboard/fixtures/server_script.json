@@ -1,0 +1,12 @@
+[
+  {
+    "doctype": "Server Script",
+    "name": "Derive Saudization Group from Nationality (Employee)",
+    "script_type": "DocType Event",
+    "reference_doctype": "Employee",
+    "event_frequency": "All",
+    "doctype_event": "Before Save",
+    "disabled": 0,
+    "script": "import frappe\n\ndef _norm(x):\n    return (x or '').strip()\n\n# Nationality in Employee is usually Link -> Nationality (stores the name).\nnationality = _norm(doc.nationality)\n\nif not nationality:\n    doc.is_saudi = 0\n    doc.saudization_nationality_group = 'Unknown'\n    return\n\n# Prefer settings-driven classification if available.\nsaudi_nat = None\ngcc_set = set()\n\ntry:\n    settings = frappe.get_single('Saudization Settings')\n    saudi_nat = _norm(settings.saudi_nationality)\n    for row in (settings.gcc_nationalities or []):\n        gcc_set.add(_norm(getattr(row, 'nationality', None)))\nexcept Exception:\n    # Settings doctype may not be configured yet. Fall back to common GCC list.\n    gcc_set = {\n        'Saudi Arabia', 'United Arab Emirates', 'Kuwait', 'Bahrain', 'Qatar', 'Oman'\n    }\n\nif saudi_nat and nationality == saudi_nat:\n    doc.is_saudi = 1\n    doc.saudization_nationality_group = 'Saudi'\nelif nationality in gcc_set:\n    doc.is_saudi = 0\n    doc.saudization_nationality_group = 'GCC'\nelse:\n    # Not Saudi and not GCC\n    doc.is_saudi = 0\n    doc.saudization_nationality_group = 'Non-GCC'\n"
+  }
+]

@@ -1,0 +1,15 @@
+{
+ "doctype": "DocType",
+ "name": "Saudization Settings",
+ "module": "Saudization Dashboard",
+ "custom": 0,
+ "issingle": 1,
+ "fields": [
+  {"fieldname":"saudi_nationality","label":"Saudi Nationality","fieldtype":"Link","options":"Nationality","reqd":1},
+  {"fieldname":"gcc_nationalities","label":"GCC Nationalities","fieldtype":"Table","options":"Saudization Settings GCC Nationality"}
+ ],
+ "permissions": [
+  {"role":"HR Manager","read":1,"write":1},
+  {"role":"System Manager","read":1,"write":1}
+ ]
+}

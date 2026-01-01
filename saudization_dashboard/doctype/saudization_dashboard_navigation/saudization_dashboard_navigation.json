@@ -1,0 +1,38 @@
+{
+ "doctype": "DocType",
+ "name": "Saudization Dashboard Navigation",
+ "module": "Saudization Dashboard",
+ "custom": 0,
+ "issingle": 1,
+ "fields": [
+  {
+   "fieldname": "enable_tabs",
+   "label": "Enable Tabs",
+   "fieldtype": "Check",
+   "default": 1
+  },
+  {
+   "fieldname": "default_tab",
+   "label": "Default Tab Label",
+   "fieldtype": "Data"
+  },
+  {
+   "fieldname": "tabs",
+   "label": "Tabs",
+   "fieldtype": "Table",
+   "options": "Saudization Dashboard Tab"
+  }
+ ],
+ "permissions": [
+  {
+   "role": "HR Manager",
+   "read": 1,
+   "write": 1
+  },
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1
+  }
+ ]
+}

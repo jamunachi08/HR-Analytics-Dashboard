@@ -1,0 +1,21 @@
+{
+ "doctype": "DocType",
+ "name": "Saudization Policy",
+ "module": "Saudization Dashboard",
+ "custom": 0,
+ "is_submittable": 0,
+ "autoname": "format:SD-POL-.#####",
+ "title_field": "company",
+ "fields": [
+  {"fieldname":"company","label":"Company","fieldtype":"Link","options":"Company","reqd":1},
+  {"fieldname":"effective_from","label":"Effective From","fieldtype":"Date","reqd":1},
+  {"fieldname":"effective_to","label":"Effective To","fieldtype":"Date"},
+  {"fieldname":"default_target_percent","label":"Default Target %","fieldtype":"Percent","reqd":1},
+  {"fieldname":"notes","label":"Notes","fieldtype":"Small Text"},
+  {"fieldname":"lines","label":"Policy Lines","fieldtype":"Table","options":"Saudization Policy Line"}
+ ],
+ "permissions": [
+  {"role":"HR Manager","read":1,"write":1,"create":1,"delete":1},
+  {"role":"System Manager","read":1,"write":1,"create":1,"delete":1}
+ ]
+}

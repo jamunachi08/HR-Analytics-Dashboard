@@ -1,0 +1,11 @@
+{
+ "doctype": "DocType",
+ "name": "Saudization Settings GCC Nationality",
+ "module": "Saudization Dashboard",
+ "istable": 1,
+ "custom": 0,
+ "fields": [
+  {"fieldname":"nationality","label":"Nationality","fieldtype":"Link","options":"Nationality","reqd":1}
+ ],
+ "permissions": []
+}

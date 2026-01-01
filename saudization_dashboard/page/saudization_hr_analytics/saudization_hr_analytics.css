@@ -1,0 +1,138 @@
+/*
+  Saudization HR Analytics dashboard styling
+  - Uses CSS variables supplied by Saudization Dashboard Theme
+  - Defaults match the provided sample (purple dashboard)
+*/
+
+.sd-dashboard {
+  --sd-page-bg: #5b0d55;
+  --sd-panel-bg: #7a1b73;
+  --sd-card-bg: #6a1665;
+  --sd-border: rgba(255,255,255,0.25);
+  --sd-text: #ffffff;
+  --sd-muted: rgba(255,255,255,0.70);
+  --sd-kpi: #ffffff;
+
+  background: var(--sd-page-bg);
+  min-height: calc(100vh - 84px);
+  padding: 14px;
+  border-radius: 12px;
+}
+
+.sd-dashboard .page-head {
+  background: transparent;
+}
+
+.sd-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 12px;
+}
+
+.sd-card {
+  background: var(--sd-panel-bg);
+  border: 1px solid var(--sd-border);
+  border-radius: 14px;
+  padding: 12px;
+  color: var(--sd-text);
+}
+
+.sd-card h4 {
+  margin: 0 0 10px 0;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  color: var(--sd-text);
+  text-transform: uppercase;
+}
+
+#sd-kpis {
+  background: transparent;
+  border: 0;
+  padding: 0;
+}
+
+.sd-kpi {
+  background: var(--sd-card-bg);
+  border: 1px solid var(--sd-border);
+  border-radius: 12px;
+  padding: 12px;
+  min-width: 0;
+}
+
+.sd-kpi .sd-kpi-label {
+  font-size: 11px;
+  color: var(--sd-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.2px;
+}
+
+.sd-kpi .sd-kpi-value {
+  font-size: 26px;
+  font-weight: 800;
+  margin-top: 6px;
+  color: var(--sd-kpi);
+  line-height: 1.1;
+}
+
+.sd-chart {
+  background: transparent;
+}
+
+.sd-dashboard .table {
+  color: var(--sd-text);
+  background: transparent;
+}
+
+.sd-dashboard .table thead th {
+  color: var(--sd-text);
+  border-bottom: 1px solid var(--sd-border);
+}
+
+.sd-dashboard .table td,
+.sd-dashboard .table th {
+  border-top: 1px solid var(--sd-border);
+}
+
+/* Ensure frappe page container does not override our background */
+.sd-dashboard .layout-main-section-wrapper,
+.sd-dashboard .layout-main-section {
+  background: transparent !important;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .sd-kpi { grid-column: span 2; }
+}
+
+@media (max-width: 768px) {
+  .sd-dashboard { padding: 10px; }
+}
+
+/* Tabs (configurable via Saudization Dashboard Theme) */
+.sd-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.sd-tab {
+  background: var(--sd-tab-bg, var(--sd-card-bg));
+  color: var(--sd-tab-text, var(--sd-text));
+  border: 1px solid var(--sd-border);
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.sd-tab:hover {
+  filter: brightness(1.05);
+}
+
+.sd-tab-active {
+  background: var(--sd-tab-active-bg, #1E90FF);
+  color: var(--sd-tab-active-text, #ffffff);
+  border-color: var(--sd-border);
+}

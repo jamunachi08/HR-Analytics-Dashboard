@@ -1,0 +1,25 @@
+[
+  {
+    "doctype": "Custom Field",
+    "name": "Employee-is_saudi",
+    "dt": "Employee",
+    "fieldname": "is_saudi",
+    "label": "Is Saudi",
+    "fieldtype": "Check",
+    "insert_after": "nationality",
+    "read_only": 1,
+    "no_copy": 1
+  },
+  {
+    "doctype": "Custom Field",
+    "name": "Employee-saudization_nationality_group",
+    "dt": "Employee",
+    "fieldname": "saudization_nationality_group",
+    "label": "Saudization Nationality Group",
+    "fieldtype": "Select",
+    "options": "Saudi\nGCC\nNon-GCC\nUnknown",
+    "insert_after": "is_saudi",
+    "read_only": 1,
+    "no_copy": 1
+  }
+]

@@ -1,0 +1,1 @@
+recursive-include saudization_dashboard *.json *.js *.py *.md *.css *.html

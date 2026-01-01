@@ -1,0 +1,16 @@
+{
+ "doctype": "DocType",
+ "name": "Saudization Policy Line",
+ "module": "Saudization Dashboard",
+ "istable": 1,
+ "custom": 0,
+ "fields": [
+  {"fieldname":"dimension_type","label":"Dimension Type","fieldtype":"Select","options":"Overall\nDepartment\nDesignation\nDepartment+Designation\nNationality Group","reqd":1},
+  {"fieldname":"department","label":"Department","fieldtype":"Link","options":"Department"},
+  {"fieldname":"designation","label":"Designation","fieldtype":"Link","options":"Designation"},
+  {"fieldname":"nationality_group","label":"Nationality Group","fieldtype":"Select","options":"Saudi\nGCC\nNon-GCC\nUnknown"},
+  {"fieldname":"target_percent","label":"Target %","fieldtype":"Percent","reqd":1},
+  {"fieldname":"min_headcount","label":"Min Headcount","fieldtype":"Int","default":3}
+ ],
+ "permissions": []
+}

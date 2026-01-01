@@ -1,0 +1,115 @@
+{
+ "doctype": "DocType",
+ "name": "Saudization Dashboard Theme",
+ "module": "Saudization Dashboard",
+ "custom": 0,
+ "issingle": 1,
+ "fields": [
+  {
+   "fieldname": "enable_custom_theme",
+   "label": "Enable Custom Theme",
+   "fieldtype": "Check",
+   "default": 1
+  },
+  {
+   "fieldname": "section_colors",
+   "label": "Colors",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "page_background",
+   "label": "Page Background",
+   "fieldtype": "Data",
+   "default": "#5b0d55"
+  },
+  {
+   "fieldname": "panel_background",
+   "label": "Panel Background",
+   "fieldtype": "Data",
+   "default": "#7a1b73"
+  },
+  {
+   "fieldname": "card_background",
+   "label": "Card Background",
+   "fieldtype": "Data",
+   "default": "#6a1665"
+  },
+  {
+   "fieldname": "border_color",
+   "label": "Border Color",
+   "fieldtype": "Data",
+   "default": "rgba(255,255,255,0.25)"
+  },
+  {
+   "fieldname": "text_color",
+   "label": "Text Color",
+   "fieldtype": "Data",
+   "default": "#ffffff"
+  },
+  {
+   "fieldname": "muted_text_color",
+   "label": "Muted Text Color",
+   "fieldtype": "Data",
+   "default": "rgba(255,255,255,0.70)"
+  },
+  {
+   "fieldname": "kpi_value_color",
+   "label": "KPI Value Color",
+   "fieldtype": "Data",
+   "default": "#ffffff"
+  },
+  {
+   "fieldname": "section_charts",
+   "label": "Charts",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "chart_palette",
+   "label": "Chart Color Palette (comma-separated)",
+   "fieldtype": "Small Text",
+   "default": "#1E90FF,#22C55E,#F59E0B,#EF4444,#A855F7,#06B6D4,#F97316,#84CC16"
+  },
+  {
+   "fieldname": "chart_height",
+   "label": "Default Chart Height",
+   "fieldtype": "Int",
+   "default": 260
+  },
+  {
+   "fieldname": "tab_bg_color",
+   "label": "Tab Background",
+   "fieldtype": "Data",
+   "default": "#6a1665"
+  },
+  {
+   "fieldname": "tab_text_color",
+   "label": "Tab Text",
+   "fieldtype": "Data",
+   "default": "rgba(255,255,255,0.85)"
+  },
+  {
+   "fieldname": "tab_active_bg_color",
+   "label": "Tab Active Background",
+   "fieldtype": "Data",
+   "default": "#1E90FF"
+  },
+  {
+   "fieldname": "tab_active_text_color",
+   "label": "Tab Active Text",
+   "fieldtype": "Data",
+   "default": "#ffffff"
+  }
+ ],
+ "permissions": [
+  {
+   "role": "HR Manager",
+   "read": 1,
+   "write": 1
+  },
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1
+  }
+ ]
+}

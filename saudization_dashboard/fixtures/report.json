@@ -1,0 +1,129 @@
+[
+  {
+    "doctype": "Report",
+    "name": "Saudization KPI Summary",
+    "report_name": "Saudization KPI Summary",
+    "ref_doctype": "Employee",
+    "report_type": "Query Report",
+    "is_standard": "Yes",
+    "module": "Saudization Dashboard",
+    "query": "WITH latest_salary AS (\n  SELECT ssa.employee, ssa.base\n  FROM `tabSalary Structure Assignment` ssa\n  INNER JOIN (\n    SELECT employee, MAX(from_date) AS max_from_date\n    FROM `tabSalary Structure Assignment`\n    WHERE docstatus = 1\n    GROUP BY employee\n  ) x ON x.employee = ssa.employee AND x.max_from_date = ssa.from_date\n  WHERE ssa.docstatus = 1\n)\nSELECT\n  COUNT(*) AS total_employees,\n  SUM(CASE WHEN e.is_saudi = 1 THEN 1 ELSE 0 END) AS saudi_employees,\n  SUM(CASE WHEN e.is_saudi = 0 THEN 1 ELSE 0 END) AS non_saudi_employees,\n  ROUND(100 * SUM(CASE WHEN e.is_saudi = 1 THEN 1 ELSE 0 END) / NULLIF(COUNT(*),0), 1) AS saudization_percent,\n  ROUND(AVG(CASE WHEN e.is_saudi = 1 THEN ls.base END), 0) AS avg_salary_saudi,\n  ROUND(AVG(CASE WHEN e.is_saudi = 0 THEN ls.base END), 0) AS avg_salary_non_saudi,\n  ROUND(AVG(CASE WHEN e.is_saudi = 1 THEN TIMESTAMPDIFF(MONTH, e.date_of_joining, CURDATE()) END)/12, 1) AS avg_tenure_years_saudi,\n  ROUND(AVG(CASE WHEN e.is_saudi = 0 THEN TIMESTAMPDIFF(MONTH, e.date_of_joining, CURDATE()) END)/12, 1) AS avg_tenure_years_non_saudi\nFROM `tabEmployee` e\nLEFT JOIN latest_salary ls ON ls.employee = e.name\nWHERE e.status = 'Active'\n  AND e.company = %(company)s\n  AND ( %(department)s IS NULL OR e.department = %(department)s )\n  AND ( %(designation)s IS NULL OR e.designation = %(designation)s )\n  AND ( %(nationality_group)s IS NULL OR e.saudization_nationality_group = %(nationality_group)s );",
+    "filters": [
+      {"fieldname":"company","label":"Company","fieldtype":"Link","options":"Company","reqd":1},
+      {"fieldname":"department","label":"Department","fieldtype":"Link","options":"Department"},
+      {"fieldname":"designation","label":"Designation","fieldtype":"Link","options":"Designation"},
+      {"fieldname":"nationality_group","label":"Nationality Group","fieldtype":"Select","options":"\nSaudi\nGCC\nNon-GCC\nUnknown"}
+    ]
+  },
+  {
+    "doctype": "Report",
+    "name": "Saudization by Nationality Group",
+    "report_name": "Saudization by Nationality Group",
+    "ref_doctype": "Employee",
+    "report_type": "Query Report",
+    "is_standard": "Yes",
+    "module": "Saudization Dashboard",
+    "query": "SELECT\n  e.saudization_nationality_group AS nationality_group,\n  COUNT(*) AS headcount,\n  ROUND(100 * COUNT(*) / SUM(COUNT(*)) OVER (), 1) AS percent\nFROM `tabEmployee` e\nWHERE e.status='Active'\n  AND e.company = %(company)s\n  AND ( %(department)s IS NULL OR e.department = %(department)s )\n  AND ( %(designation)s IS NULL OR e.designation = %(designation)s )\nGROUP BY e.saudization_nationality_group\nORDER BY headcount DESC;",
+    "filters": [
+      {"fieldname":"company","label":"Company","fieldtype":"Link","options":"Company","reqd":1},
+      {"fieldname":"department","label":"Department","fieldtype":"Link","options":"Department"},
+      {"fieldname":"designation","label":"Designation","fieldtype":"Link","options":"Designation"}
+    ]
+  },
+  {
+    "doctype": "Report",
+    "name": "Saudization Actual vs Target (Overall)",
+    "report_name": "Saudization Actual vs Target (Overall)",
+    "ref_doctype": "Employee",
+    "report_type": "Query Report",
+    "is_standard": "Yes",
+    "module": "Saudization Dashboard",
+    "query": "WITH policy AS (\n  SELECT sp.name, sp.default_target_percent\n  FROM `tabSaudization Policy` sp\n  WHERE sp.company = %(company)s\n    AND sp.effective_from <= CURDATE()\n    AND (sp.effective_to IS NULL OR sp.effective_to >= CURDATE())\n  ORDER BY sp.effective_from DESC\n  LIMIT 1\n),\nactual AS (\n  SELECT\n    ROUND(100 * SUM(CASE WHEN e.is_saudi=1 THEN 1 ELSE 0 END)/NULLIF(COUNT(*),0), 1) AS actual_percent\n  FROM `tabEmployee` e\n  WHERE e.status='Active'\n    AND e.company=%(company)s\n)\nSELECT\n  'Overall' AS metric,\n  a.actual_percent AS actual_percent,\n  p.default_target_percent AS target_percent,\n  (a.actual_percent - p.default_target_percent) AS variance_percent\nFROM actual a CROSS JOIN policy p;",
+    "filters": [
+      {"fieldname":"company","label":"Company","fieldtype":"Link","options":"Company","reqd":1}
+    ]
+  },
+  {
+    "doctype": "Report",
+    "name": "Saudization by Designation",
+    "report_name": "Saudization by Designation",
+    "ref_doctype": "Employee",
+    "report_type": "Query Report",
+    "is_standard": "Yes",
+    "module": "Saudization Dashboard",
+    "query": "SELECT\n  e.designation,\n  SUM(CASE WHEN e.is_saudi=1 THEN 1 ELSE 0 END) AS saudi_count,\n  COUNT(*) AS total_count,\n  ROUND(100 * SUM(CASE WHEN e.is_saudi=1 THEN 1 ELSE 0 END)/NULLIF(COUNT(*),0), 1) AS saudization_percent\nFROM `tabEmployee` e\nWHERE e.status='Active'\n  AND e.company=%(company)s\n  AND ( %(department)s IS NULL OR e.department = %(department)s )\nGROUP BY e.designation\nHAVING COUNT(*) >= IFNULL(%(min_headcount)s, 3)\nORDER BY saudization_percent ASC, total_count DESC;",
+    "filters": [
+      {"fieldname":"company","label":"Company","fieldtype":"Link","options":"Company","reqd":1},
+      {"fieldname":"department","label":"Department","fieldtype":"Link","options":"Department"},
+      {"fieldname":"min_headcount","label":"Min Headcount","fieldtype":"Int","default":3}
+    ]
+  },
+  {
+    "doctype": "Report",
+    "name": "Saudization by Department",
+    "report_name": "Saudization by Department",
+    "ref_doctype": "Employee",
+    "report_type": "Query Report",
+    "is_standard": "Yes",
+    "module": "Saudization Dashboard",
+    "query": "SELECT\n  e.department,\n  SUM(CASE WHEN e.is_saudi=1 THEN 1 ELSE 0 END) AS saudi_count,\n  SUM(CASE WHEN e.is_saudi=0 THEN 1 ELSE 0 END) AS non_saudi_count,\n  COUNT(*) AS total_count,\n  ROUND(100 * SUM(CASE WHEN e.is_saudi=1 THEN 1 ELSE 0 END)/NULLIF(COUNT(*),0), 1) AS saudization_percent\nFROM `tabEmployee` e\nWHERE e.status='Active'\n  AND e.company=%(company)s\n  AND ( %(designation)s IS NULL OR e.designation = %(designation)s )\nGROUP BY e.department\nORDER BY saudization_percent ASC, total_count DESC;",
+    "filters": [
+      {"fieldname":"company","label":"Company","fieldtype":"Link","options":"Company","reqd":1},
+      {"fieldname":"designation","label":"Designation","fieldtype":"Link","options":"Designation"}
+    ]
+  },
+  {
+    "doctype": "Report",
+    "name": "Saudization by Salary Band",
+    "report_name": "Saudization by Salary Band",
+    "ref_doctype": "Employee",
+    "report_type": "Query Report",
+    "is_standard": "Yes",
+    "module": "Saudization Dashboard",
+    "query": "WITH latest_salary AS (\n  SELECT ssa.employee, ssa.base\n  FROM `tabSalary Structure Assignment` ssa\n  INNER JOIN (\n    SELECT employee, MAX(from_date) AS max_from_date\n    FROM `tabSalary Structure Assignment`\n    WHERE docstatus = 1\n    GROUP BY employee\n  ) x ON x.employee = ssa.employee AND x.max_from_date = ssa.from_date\n  WHERE ssa.docstatus = 1\n),\nemp AS (\n  SELECT e.name, e.is_saudi, e.company, e.department, e.designation, IFNULL(ls.base,0) AS base\n  FROM `tabEmployee` e\n  LEFT JOIN latest_salary ls ON ls.employee = e.name\n  WHERE e.status='Active'\n    AND e.company=%(company)s\n)\nSELECT\n  CASE\n    WHEN base <= 5000 THEN 'Up to 5k'\n    WHEN base <= 10000 THEN '5k-10k'\n    WHEN base <= 15000 THEN '10k-15k'\n    ELSE '15k+'\n  END AS salary_band,\n  SUM(CASE WHEN is_saudi=1 THEN 1 ELSE 0 END) AS saudi_count,\n  COUNT(*) AS total_count,\n  ROUND(100 * SUM(CASE WHEN is_saudi=1 THEN 1 ELSE 0 END)/NULLIF(COUNT(*),0), 1) AS saudization_percent\nFROM emp\nGROUP BY salary_band\nORDER BY FIELD(salary_band,'Up to 5k','5k-10k','10k-15k','15k+');",
+    "filters": [
+      {"fieldname":"company","label":"Company","fieldtype":"Link","options":"Company","reqd":1}
+    ]
+  },
+  {
+    "doctype": "Report",
+    "name": "Saudization Trend (Monthly Snapshot by DOJ)",
+    "report_name": "Saudization Trend (Monthly Snapshot by DOJ)",
+    "ref_doctype": "Employee",
+    "report_type": "Query Report",
+    "is_standard": "Yes",
+    "module": "Saudization Dashboard",
+    "query": "SELECT\n  DATE_FORMAT(e.date_of_joining, '%%Y-%%m-01') AS month,\n  ROUND(100 * SUM(CASE WHEN e.is_saudi=1 THEN 1 ELSE 0 END)/NULLIF(COUNT(*),0), 1) AS saudization_percent,\n  COUNT(*) AS hires_count\nFROM `tabEmployee` e\nWHERE e.status='Active'\n  AND e.company=%(company)s\n  AND e.date_of_joining IS NOT NULL\n  AND e.date_of_joining >= DATE_SUB(CURDATE(), INTERVAL IFNULL(%(months_back)s, 24) MONTH)\nGROUP BY month\nORDER BY month;",
+    "filters": [
+      {"fieldname":"company","label":"Company","fieldtype":"Link","options":"Company","reqd":1},
+      {"fieldname":"months_back","label":"Months Back","fieldtype":"Int","default":24}
+    ]
+  },
+  {
+    "doctype": "Report",
+    "name": "Saudization Matrix (Dept x Designation)",
+    "report_name": "Saudization Matrix (Dept x Designation)",
+    "ref_doctype": "Employee",
+    "report_type": "Query Report",
+    "is_standard": "Yes",
+    "module": "Saudization Dashboard",
+    "query": "SELECT\n  e.department,\n  e.designation,\n  SUM(CASE WHEN e.is_saudi=1 THEN 1 ELSE 0 END) AS saudi_count,\n  COUNT(*) AS total_count,\n  ROUND(100 * SUM(CASE WHEN e.is_saudi=1 THEN 1 ELSE 0 END)/NULLIF(COUNT(*),0), 1) AS saudization_percent\nFROM `tabEmployee` e\nWHERE e.status='Active'\n  AND e.company=%(company)s\nGROUP BY e.department, e.designation\nHAVING COUNT(*) >= IFNULL(%(min_headcount)s, 3)\nORDER BY e.department, saudization_percent ASC;",
+    "filters": [
+      {"fieldname":"company","label":"Company","fieldtype":"Link","options":"Company","reqd":1},
+      {"fieldname":"min_headcount","label":"Min Headcount","fieldtype":"Int","default":3}
+    ]
+  },
+  {
+    "doctype": "Report",
+    "name": "Saudization Compliance vs Target by Department",
+    "report_name": "Saudization Compliance vs Target by Department",
+    "ref_doctype": "Employee",
+    "report_type": "Query Report",
+    "is_standard": "Yes",
+    "module": "Saudization Dashboard",
+    "query": "WITH policy AS (\n  SELECT sp.name, sp.default_target_percent\n  FROM `tabSaudization Policy` sp\n  WHERE sp.company=%(company)s\n    AND sp.effective_from <= CURDATE()\n    AND (sp.effective_to IS NULL OR sp.effective_to >= CURDATE())\n  ORDER BY sp.effective_from DESC\n  LIMIT 1\n),\ntargets AS (\n  SELECT spl.department, spl.target_percent\n  FROM `tabSaudization Policy Line` spl\n  INNER JOIN policy p ON p.name = spl.parent\n  WHERE spl.dimension_type='Department'\n),\nactual AS (\n  SELECT\n    e.department,\n    ROUND(100 * SUM(CASE WHEN e.is_saudi=1 THEN 1 ELSE 0 END)/NULLIF(COUNT(*),0), 1) AS actual_percent,\n    COUNT(*) AS headcount\n  FROM `tabEmployee` e\n  WHERE e.status='Active'\n    AND e.company=%(company)s\n  GROUP BY e.department\n)\nSELECT\n  a.department,\n  a.headcount,\n  a.actual_percent,\n  COALESCE(t.target_percent, p.default_target_percent) AS target_percent,\n  (a.actual_percent - COALESCE(t.target_percent, p.default_target_percent)) AS variance_percent\nFROM actual a\nCROSS JOIN policy p\nLEFT JOIN targets t ON t.department = a.department\nORDER BY variance_percent ASC, headcount DESC;",
+    "filters": [
+      {"fieldname":"company","label":"Company","fieldtype":"Link","options":"Company","reqd":1}
+    ]
+  }
+]

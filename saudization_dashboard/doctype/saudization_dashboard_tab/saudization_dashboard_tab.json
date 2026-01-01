@@ -1,0 +1,84 @@
+{
+ "doctype": "DocType",
+ "name": "Saudization Dashboard Tab",
+ "module": "Saudization Dashboard",
+ "custom": 0,
+ "istable": 1,
+ "fields": [
+  {
+   "fieldname": "tab_label",
+   "label": "Tab Label",
+   "fieldtype": "Data",
+   "reqd": 1
+  },
+  {
+   "fieldname": "tab_type",
+   "label": "Tab Type",
+   "fieldtype": "Select",
+   "options": "Filter Dashboard\nRoute Link\nReport Link",
+   "reqd": 1,
+   "default": "Filter Dashboard"
+  },
+  {
+   "fieldname": "route",
+   "label": "Route (for Route Link)",
+   "fieldtype": "Data",
+   "depends_on": "eval:doc.tab_type==\"Route Link\""
+  },
+  {
+   "fieldname": "report_name",
+   "label": "Report (for Report Link)",
+   "fieldtype": "Link",
+   "options": "Report",
+   "depends_on": "eval:doc.tab_type==\"Report Link\""
+  },
+  {
+   "fieldname": "company",
+   "label": "Company",
+   "fieldtype": "Link",
+   "options": "Company"
+  },
+  {
+   "fieldname": "department",
+   "label": "Department",
+   "fieldtype": "Link",
+   "options": "Department"
+  },
+  {
+   "fieldname": "designation",
+   "label": "Designation",
+   "fieldtype": "Link",
+   "options": "Designation"
+  },
+  {
+   "fieldname": "nationality_group",
+   "label": "Nationality Group",
+   "fieldtype": "Select",
+   "options": "\nSaudi\nGCC\nNon-GCC\nUnknown"
+  },
+  {
+   "fieldname": "open_in_new_window",
+   "label": "Open in New Window",
+   "fieldtype": "Check",
+   "default": 0
+  },
+  {
+   "fieldname": "order",
+   "label": "Order",
+   "fieldtype": "Int",
+   "default": 0
+  }
+ ],
+ "permissions": [
+  {
+   "role": "HR Manager",
+   "read": 1,
+   "write": 1
+  },
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1
+  }
+ ]
+}
