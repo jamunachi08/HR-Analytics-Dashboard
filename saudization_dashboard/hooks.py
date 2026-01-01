@@ -36,4 +36,4 @@ fixtures = [
     },]
 
 # After install, backfill derived fields for existing employees
-after_install = "saudization_dashboard.patches.backfill_employee_saudization.execute"
+after_install = "saudization_dashboard.saudization_dashboard.patches.backfill_employee_saudization.execute"
